@@ -1,8 +1,9 @@
-from microservice.config import DevConfig
-from microservice.models import db
+from .config import DevConfig
+from .models import db
 from flask import Flask
-from microservice.extensions import rest_api
-from microservice.controllers.order import OrderApi
+from .extensions import rest_api
+from .controllers.order import OrderApi
+from .controllers.inout import InoutApi
 
 
 def create_app(object_name):
@@ -13,7 +14,15 @@ def create_app(object_name):
         OrderApi,
         '/api/order',
         '/api/order/<string:sheetno>',
-        endpoint='api'
+        endpoint='order'
+    )
+
+    rest_api.add_resource(
+        InoutApi,
+        '/api/inout',
+        '/api/inout/<string:sheetno>',
+        endpoint='inout'
+
     )
     rest_api.init_app(app)
     db.init_app(app)

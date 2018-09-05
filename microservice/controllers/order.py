@@ -1,8 +1,9 @@
 from flask_restful import Resource, marshal_with, abort
-from microservice.models import Order
-from microservice.controllers.fields import OrderFields
-from microservice.controllers.parsers import OrderParse
-from microservice import db
+from ..models import OrderMaster, SheetStatus, OrderType
+from .. import db
+from .fields import OrderFields
+from .parsers import OrderParse
+import datetime
 
 
 class OrderApi(Resource):
@@ -13,10 +14,9 @@ class OrderApi(Resource):
     @marshal_with(OrderFields.order)
     def get(self, sheetno=None):
         if sheetno:
-            order = Order.query.get(sheetno)
+            order = OrderMaster.query.get(sheetno)
             if not order:
                 abort(404, message="订单{}不存在".format(sheetno))
-                return order
             # 显示供应商名称
             order.supname = order.supply.supname
             # 显示门店名称
@@ -28,7 +28,17 @@ class OrderApi(Resource):
         else:
             args = OrderParse.get.parse_args()
             page = args['page'] or 1
-            orders = Order.query.order_by(Order.crdate.desc(), Order.crtime.desc()).paginate(page, self.perpage)
+            orders = OrderMaster.query.filter(
+                OrderMaster.validdate >= datetime.datetime.now(),  # 有效期内
+                OrderMaster.status == SheetStatus.approve.value,   # 审核状态
+                OrderMaster.sheettype == OrderType.do.value,       # 直配订单
+                OrderMaster.webapiflag != '1').order_by(           # 未处理
+                OrderMaster.crdate.desc(), OrderMaster.crtime.desc()).paginate(
+                page, self.perpage)
+
+            if orders.pages == 0:
+                abort(404, message="订单第{}页不存在".format(page))
+
             for order in orders.items:
                 # 显示供应商名称
                 order.supname = order.supply.supname
@@ -37,14 +47,16 @@ class OrderApi(Resource):
                 # 显示商品名称
                 for detail in order.details:
                     detail.itemname = detail.item.itemname
-            return orders.items
 
-    def put(self, sheetno):
+            return orders.items, 200, {"pages": orders.pages, "page": page}
+
+    def put(self, sheetno=None):
+        if not sheetno:
+            abort(400)
         if sheetno:
-            order = Order.query.get(sheetno)
+            order = OrderMaster.query.get(sheetno)
             if not order:
                 abort(404, message="订单{}不存在".format(sheetno))
-                return
             order.webapiflag = '1'
             db.session.add(order)
             db.session.commit()

@@ -1,23 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-from enum import Enum
+
 
 db = SQLAlchemy()
-
-
-class SheetStatus(Enum):
-    """单据状态"""
-    draft = '0'     # 草稿
-    submit = '1'    # 提交
-    recall = '2'    # 召回
-    approve = '5'   # 审核
-    discard = '9'   # 作废
-
-
-class OrderType(Enum):
-    do = 'DO'  # 直配
-    po = 'PO'  # 采购
-    zo = 'ZO'  # 越库
-    op = 'OP'  # 永续
 
 
 class BrDynamic(db.Model):
@@ -34,6 +18,7 @@ class Supply(db.Model):
     __tablename__ = 't_bs_master'
     supno = db.Column("fsup_no", db.String(), primary_key=True)
     supname = db.Column('fsup_name', db.String())
+
 
 
 class Branch(db.Model):
@@ -106,41 +91,87 @@ class OrderBr(db.Model):
     qty = db.Column('fqty', db.Numeric(19, 3))
 
 
-class InoutMaster:
-    """出入库主表"""
-    _mapper = {}
-    table_name = 't_inout_master'
+class DynamicModel:
+    """分组表"""
+    _mapper = {}     # 缓存model名和对象映射关系
+    table_name = ''  # 主表名
+    columns = {}     # model列
+    table_index = ""
 
-    @staticmethod
-    def model_supply(brhno=None, grpno=None):
-        if brhno and not grpno:
-            table_index = '_{}'.format(BrDynamic().get_grpno(brhno))
-        elif grpno:
-            table_index = '_{}'format(grpno)
+    def __init__(self, grpno=None, brhno=None):
+        self.grpno = grpno
+        self.brhno = brhno
+        self.table_index = self.get_table_index()
+
+    def get_table_index(self):
+        """获取表名索引"""
+        if self.brhno and not self.grpno:  # 如果传入分组名，则直接以分组名
+            table_index = '_' + BrDynamic().get_grpno(self.brhno)
+        elif self.grpno:
+            table_index = '_' + self.grpno
         else:
             table_index = ""
-        class_name = "Supply"
-        model_class = __class__._mapper.get(class_name, None)
+        return table_index
 
-    @staticmethod
-    def model(brhno=None, grpno=None):
+    def model(self):
         # 如果传入分组标号，则直接取分组标号
-        if brhno and not grpno:
-            table_index = '_' + BrDynamic().get_grpno(brhno)
-        elif grpno:
-            table_index = '_' + grpno
-        else:
-            table_index = ""
+        class_name = '{}{}'.format(self.table_name, self.table_index)
+        model_class = self._mapper.get(class_name, None)
 
-        class_name = '{}{}'.format(__class__.table_name, table_index)
-        model_class = __class__._mapper.get(class_name, None)
-        Detail = InoutDetail.model(grpno=grpno, brhno=brhno)
+        model_column = {
+            '__module__': __name__,
+            '__name__': class_name,
+            '__tablename__': '{}{}'.format(self.table_name, self.table_index),
+        }
+
+        #  model列
+        model_column.update(self.columns)
+
         if model_class is None:
-            model_class = type(class_name, (db.Model,), {
-                '__module__': __name__,
-                '__name__': class_name,
-                '__tablename__': '{}{}'.format(__class__.table_name,table_index),
+            model_class = type(class_name, (db.Model,), model_column)
+            self._mapper[class_name] = model_class
 
+        cls = model_class()
+        return cls.__class__
+
+
+class DynamicInoutDetail(DynamicModel):
+
+    table_name = 't_inout_detail'
+
+    def __init__(self, brhno=None, grpno=None):
+        super(__class__).__init__()
+        self.brhno = brhno
+        self.grpno = grpno
+        self.table_index = self.get_table_index()
+        self.columns = {
+            'sheetno': db.Column('fsheet_no',
+                                 db.String(), db.ForeignKey("t_inout_master{}.fsheet_no".format(self.table_index)),
+                                 primary_key=True),
+            'lineid': db.Column('fline_id', db.Integer, primary_key=True),
+            'itemid': db.Column("fitem_id", db.Integer),
+            'itemsubno': db.Column("fitem_subno", db.String(25)),
+            'unitno': db.Column('funit_no', db.String(4)),
+            'unitqty': db.Column('funit_qty', db.Numeric(19, 3)),
+            'packqty': db.Column('fpack_qty', db.Numeric(19, 3)),
+            'qty': db.Column("fqty", db.Numeric(19, 3)),
+            'price': db.Column("fprice", db.Numeric(19, 4)),
+            'amt': db.Column('famt', db.Numeric(19, 2)),
+        }
+
+
+class DynamicInoutMaster(DynamicModel):
+
+        table_name = 't_inout_master'
+
+        def __init__(self, brhno=None,grpno=None):
+            super(__class__).__init__()
+            self.brhno = brhno
+            self.grpno = grpno
+            self.table_index = self.get_table_index()
+            dynamicinoutdetail = DynamicInoutDetail(grpno=grpno, brhno=brhno)
+            Detail = dynamicinoutdetail.model()
+            self.columns = {
                 'sheetno': db.Column("fsheet_no", db.String(14), primary_key=True),
                 'sheettype': db.Column("fsheet_type", db.String(2)),
                 'status': db.Column('fstatus', db.String(1)),
@@ -155,58 +186,32 @@ class InoutMaster:
                 'crdate': db.Column('fcr_date', db.Date),
                 'crtime': db.Column('fcr_time', db.Time),
                 'sumamt': db.Column('fsum_amt', db.Numeric(19, 2)),
-
+                'webapi': db.Column('fwebapi_flag', db.String(1)),
                 'details': db.relationship(Detail),
-
-            })
-            __class__._mapper[class_name] = model_class
-
-        cls = model_class()
-        return cls.__class__
+            }
 
 
-class InoutDetail:
-    """出入库明细表"""
-    _mapper = {}
-    table_name = 't_inout_detail'
+class DynamicStock(DynamicModel):
+    table_name = 't_sk_master'
 
-    @staticmethod
-    def model(brhno=None, grpno=None):
-        # 如果传入分组标号，则直接取分组标号
-        if brhno and not grpno:
-            table_index = '_' + BrDynamic().get_grpno(brhno)
-        elif grpno:
-            table_index = '_' + grpno
-        else:
-            table_index = ""
-        class_name = '{}{}'.format(__class__.table_name, table_index)
+    def __init__(self, brhno=None, grpno=None):
+        super(__class__).__init__()
+        self.brhno = brhno
+        self.grpno = grpno
+        self.table_index = self.get_table_index()
 
-        model_class = __class__._mapper.get(class_name, None)
-        if model_class is None:
-            model_class = type(class_name, (db.Model,), {
-                '__module__': __name__,
-                '__name__': class_name,
-                '__tablename__': '{}{}'.format(__class__.table_name , table_index),
+        self.columns = {
+            "sheetno": db.Column("fsheet_no", db.String, primary_key=True),
+            "lineid": db.Column("fline_id", db.Integer, primary_key=True),
+            "brhno": db.Column("fbrh_no", db.String),
+            "whno": db.Column('fwh_no', db.String),
+            "itemid": db.Column('fitem_id', db.Integer),
+            "qty": db.Column("fqty", db.Numeric(19, 3))
+        }
 
-                'sheetno': db.Column('fsheet_no',
-                                      db.String(),
-                                      db.ForeignKey("t_inout_master{}.fsheet_no".format(table_index)),
-                                      primary_key=True),
-                'lineid': db.Column('fline_id', db.Integer, primary_key=True),
-                'itemid':  db.Column("fitem_id", db.Integer, db.ForeignKey("t_bi_master.fitem_id")),
-                'itemsubno': db.Column("fitem_subno", db.String(25)),
-                'unitno': db.Column('funit_no', db.String(4)),
-                'unitqty': db.Column('funit_qty', db.Numeric(19, 3)),
-                'packqty': db.Column('fpack_qty', db.Numeric(19, 3)),
-                'qty': db.Column("fqty", db.Numeric(19, 3)),
-                'price': db.Column("fprice", db.Numeric(19, 4)),
-                'amt': db.Column('famt', db.Numeric(19, 2)),
 
-            })
-            __class__._mapper[class_name] = model_class
 
-        cls = model_class()
-        return cls.__class__
+
 
 
 

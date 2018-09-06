@@ -1,6 +1,17 @@
 from flask_script import Manager, Server
 from microservice import create_app
-from microservice.models import db, OrderMaster, OrderDetail, OrderBr, Supply, BrDynamic, InoutMaster, InoutDetail
+from microservice.models import (
+    db,
+    Supply,
+    Branch,
+    OrderMaster,
+    OrderDetail,
+    OrderBr,
+    BrDynamic,
+    DynamicStock,
+    DynamicInoutMaster,
+    DynamicInoutDetail
+)
 
 
 env = "microservice.config.{}Config".format("Dev")
@@ -11,14 +22,20 @@ manager.add_command("server", Server)
 
 @manager.shell
 def make_shell_context():
-    return dict(app=app,db=db,
+    return dict(app=app,
+                db=db,
                 OrderMaster=OrderMaster,
                 OrderDetail=OrderDetail,
                 OrderBr=OrderBr,
                 Supply=Supply,
                 BrDynamic=BrDynamic,
-                InoutMaster=InoutMaster,
-                InoutDetail=InoutDetail)
+                DynamicStock=DynamicStock,
+                DynamicInoutMaster=DynamicInoutMaster,
+                DynamicInoutDetail=DynamicInoutDetail,
+                Branch=Branch
+
+
+                )
 
 
 if __name__ == "__main__":

@@ -60,6 +60,7 @@ class InoutFields:
     inoutmaster = {
         "sheetno": fields.String,
         "sheettype": fields.String,
+        "srcno": fields.String,
         "supno": fields.String,
         "supname": fields.String,
         "brhno": fields.String,
@@ -73,6 +74,20 @@ class InoutFields:
         "croperno": fields.String,
         "details": fields.Nested(inoutdetail),
 
+    }
+
+
+class StockFields:
+    stock = {
+        "brhno": fields.String,
+        "brhname": fields.String,
+        "whno": fields.String,
+        "whname": fields.String,
+        "itemid": fields.Integer,
+        "itemno": fields.String,
+        "itemsubno": fields.String,
+        "itemname": fields.String,
+        "qty": fields.Float
     }
 
 

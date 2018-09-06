@@ -2,9 +2,9 @@ from .config import DevConfig
 from .models import db
 from flask import Flask
 from .extensions import rest_api
-from .controllers.order import OrderApi
-from .controllers.inout import InoutApi
-
+from .controllers.order import OrderApi, OrderDOApi
+from .controllers.inout import InoutApi, InoutPIApi, InoutROApi
+from .controllers.stock import StockApi
 
 def create_app(object_name):
     app = Flask(__name__)
@@ -18,12 +18,44 @@ def create_app(object_name):
     )
 
     rest_api.add_resource(
+        OrderDOApi,
+        '/api/order/do',
+        '/api/order/do/<string:sheetno>',
+        endpoint='do'
+    )
+
+    rest_api.add_resource(
         InoutApi,
         '/api/inout',
         '/api/inout/<string:sheetno>',
         endpoint='inout'
 
     )
+
+    rest_api.add_resource(
+        InoutPIApi,
+        '/api/inout/pi',
+        '/api/inout/pi/<string:sheetno>',
+        endpoint='pi'
+
+    )
+
+    rest_api.add_resource(
+        InoutROApi,
+        '/api/inout/ro',
+        '/api/inout/ro/<string:sheetno>',
+        endpoint='ro'
+
+    )
+
+    rest_api.add_resource(
+        StockApi,
+        '/api/stock',
+        '/api/stock/<string:brhno>',
+        endpoint='stock'
+
+    )
+
     rest_api.init_app(app)
     db.init_app(app)
 

@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+import hashlib
 
 db = SQLAlchemy()
 
@@ -13,12 +13,24 @@ class BrDynamic(db.Model):
         return self.query.get(brhno).dynamicgrp
 
 
+class User(db.Model):
+    __tablename__ = 't_sa_master'
+    userno = db.Column('foper_no', db.String, primary_key=True)
+    username = db.Column("foper_name", db.String)
+    pwd = db.Column("fpwd", db.String)
+
+    def check_password(self, password):
+        md5 = hashlib.md5()
+        md5.update(bytes('{}{}'.format(self.userno, password), encoding='utf-8'))
+        return md5.hexdigest() == self.pwd
+
+
+
 class Supply(db.Model):
     """供应商"""
     __tablename__ = 't_bs_master'
     supno = db.Column("fsup_no", db.String(), primary_key=True)
     supname = db.Column('fsup_name', db.String())
-
 
 
 class Branch(db.Model):
@@ -136,7 +148,7 @@ class DynamicModel:
 
 
 class DynamicInoutDetail(DynamicModel):
-
+    """出入库明细表"""
     table_name = 't_inout_detail'
 
     def __init__(self, brhno=None, grpno=None):
@@ -161,7 +173,7 @@ class DynamicInoutDetail(DynamicModel):
 
 
 class DynamicInoutMaster(DynamicModel):
-
+        """出入库主表"""
         table_name = 't_inout_master'
 
         def __init__(self, brhno=None,grpno=None):
@@ -192,22 +204,16 @@ class DynamicInoutMaster(DynamicModel):
 
 
 class DynamicStock(DynamicModel):
+    """库存表"""
     table_name = 't_sk_master'
-
-    def __init__(self, brhno=None, grpno=None):
-        super(__class__).__init__()
-        self.brhno = brhno
-        self.grpno = grpno
-        self.table_index = self.get_table_index()
-
-        self.columns = {
-            "sheetno": db.Column("fsheet_no", db.String, primary_key=True),
-            "lineid": db.Column("fline_id", db.Integer, primary_key=True),
-            "brhno": db.Column("fbrh_no", db.String),
-            "whno": db.Column('fwh_no', db.String),
-            "itemid": db.Column('fitem_id', db.Integer),
-            "qty": db.Column("fqty", db.Numeric(19, 3))
-        }
+    columns = {
+        "sheetno": db.Column("fsheet_no", db.String, primary_key=True),
+        "lineid": db.Column("fline_id", db.Integer, primary_key=True),
+        "brhno": db.Column("fbrh_no", db.String),
+        "whno": db.Column('fwh_no', db.String),
+        "itemid": db.Column('fitem_id', db.Integer),
+        "qty": db.Column("fqty", db.Numeric(19, 3))
+    }
 
 
 

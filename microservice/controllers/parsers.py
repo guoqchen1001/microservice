@@ -45,3 +45,38 @@ class InoutParser:
         default='',
     )
 
+
+class StockParser:
+    get = reqparse.RequestParser()
+    get.add_argument(
+        'page',
+        type=int,
+        location=['args', 'headers'],
+        required=False,
+        default=1,
+    )
+    get.add_argument(
+        'itemsubno',
+        type=str,
+        location=['args', 'headers'],
+        required=False,
+        default=''
+    )
+
+
+class UserParser:
+    post = reqparse.RequestParser()
+    post.add_argument(
+        'userno',
+        type=str,
+        location=['form'],
+        required=True,
+        help="userno is required"
+    )
+    post.add_argument(
+        'password',
+        type=str,
+        location=['form'],
+        required=True,
+        help="password is required"
+    )

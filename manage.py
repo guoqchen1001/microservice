@@ -10,7 +10,8 @@ from microservice.models import (
     BrDynamic,
     DynamicStock,
     DynamicInoutMaster,
-    DynamicInoutDetail
+    DynamicInoutDetail,
+    User
 )
 
 
@@ -32,7 +33,8 @@ def make_shell_context():
                 DynamicStock=DynamicStock,
                 DynamicInoutMaster=DynamicInoutMaster,
                 DynamicInoutDetail=DynamicInoutDetail,
-                Branch=Branch
+                Branch=Branch,
+                User=User
 
 
                 )

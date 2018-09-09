@@ -28,5 +28,3 @@ class SheetSlice:
     """单据切片"""
     sheet_grp_slice = slice(6, 8)
 
-
-

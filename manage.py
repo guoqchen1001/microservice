@@ -1,4 +1,5 @@
 from flask_script import Manager, Server
+from flask_apidoc.commands import GenerateApiDoc
 from microservice import create_app
 from microservice.models import (
     db,
@@ -20,6 +21,8 @@ env = "microservice.config.{}Config".format("Dev")
 app = create_app(env)
 manager = Manager(app)
 manager.add_command("server", Server)
+manager.add_command('apidoc', GenerateApiDoc())
+
 
 @manager.shell
 def make_shell_context():

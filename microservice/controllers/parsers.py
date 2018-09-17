@@ -11,7 +11,7 @@ class OrderParse:
         default=1,
     )
     get.add_argument(
-        'sheettype',
+        'sheet_type',
         type=str,
         location=['args', 'headers'],
         required=False,
@@ -64,19 +64,27 @@ class StockParser:
     )
 
 
-class UserParser:
+class AuthParser:
     post = reqparse.RequestParser()
     post.add_argument(
-        'userno',
+        'user_no',
         type=str,
         location=['form'],
         required=True,
-        help="userno is required"
+        help="未检测到参数：<user_no>"
     )
     post.add_argument(
         'password',
         type=str,
         location=['form'],
         required=True,
-        help="password is required"
+        help="未检测到参数：<password>"
+    )
+
+    auth = reqparse.RequestParser()
+    auth.add_argument(
+        "token",
+        type=str,
+        required=True,
+        help="未检测到参数：<token>"
     )

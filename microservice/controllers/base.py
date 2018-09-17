@@ -28,3 +28,13 @@ class SheetSlice:
     """单据切片"""
     sheet_grp_slice = slice(6, 8)
 
+
+class UserPower:
+    """返回登录用户有权限的供应商，门店等"""
+    def __init__(self, userno):
+        self.userno = userno
+
+    def get_supno(self):
+        """目前默认用户编码和供应商编码相同"""
+        return '203701'
+

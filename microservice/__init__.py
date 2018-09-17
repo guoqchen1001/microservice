@@ -1,11 +1,12 @@
 from .config import DevConfig
 from .models import db
 from flask import Flask
-from .extensions import rest_api
+from .extensions import rest_api, apidoc
 from .controllers.order import OrderApi, OrderDOApi
 from .controllers.inout import InoutApi, InoutPIApi, InoutROApi
 from .controllers.stock import StockApi
 from .controllers.auth import AuthApi
+from .controllers.index import IndexApi
 
 
 def create_app(object_name):
@@ -24,13 +25,11 @@ def create_app(object_name):
     rest_api.add_resource(StockApi,'/api/stock', '/api/stock/<string:brhno>', endpoint='stock')
     # 登录验证,获取token
     rest_api.add_resource(AuthApi, '/api/auth')
+    # 主页
+    rest_api.add_resource(IndexApi, '/')
 
     rest_api.init_app(app)
+    apidoc.init_app(app)
     db.init_app(app)
-
-    @app.route('/')
-    def index():
-        return "hello world"
-
 
     return app

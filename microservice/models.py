@@ -6,51 +6,59 @@ db = SQLAlchemy()
 
 class BrDynamic(db.Model):
     __tablename__ = "t_br_dynamic"
-    brhno = db.Column('fbrh_no', db.String(),primary_key=True)
-    dynamicgrp = db.Column("fdynamic_grp", db.String())
+    brh_no = db.Column('fbrh_no', db.String(), primary_key=True)
+    dynamic_grp = db.Column("fdynamic_grp", db.String())
 
-    def get_grpno(self, brhno):
-        return self.query.get(brhno).dynamicgrp
+    def get_grpno(self, brh_no):
+        return self.query.get(brh_no).dynamic_grp
 
 
 class User(db.Model):
     __tablename__ = 't_sa_master'
-    userno = db.Column('foper_no', db.String, primary_key=True)
-    username = db.Column("foper_name", db.String)
+    user_no = db.Column('foper_no', db.String, primary_key=True)
+    user_name = db.Column("foper_name", db.String)
     pwd = db.Column("fpwd", db.String)
 
     def check_password(self, password):
         """检测密码"""
         md5 = hashlib.md5()
-        md5.update(bytes('{}{}'.format(self.userno, password), encoding='utf-8'))
+        md5.update(bytes('{}{}'.format(self.user_no, password), encoding='utf-8'))
         return md5.hexdigest() == self.pwd
 
     def isvalid(self):
         """是否能够登录系统"""
         return True
 
+    def get_supply(self):
+        """有权限的供应商"""
+        return "203701"
+
+    def get_branch(self):
+        """有权限的机构"""
+        return None
+
 
 class Supply(db.Model):
     """供应商"""
     __tablename__ = 't_bs_master'
-    supno = db.Column("fsup_no", db.String(), primary_key=True)
-    supname = db.Column('fsup_name', db.String())
+    sup_no = db.Column("fsup_no", db.String(), primary_key=True)
+    sup_name = db.Column('fsup_name', db.String())
 
 
 class Branch(db.Model):
     """门店"""
     __tablename__ = 't_br_master'
-    brhno = db.Column("fbrh_no", db.String(), primary_key=True)
-    brhname = db.Column("fbrh_name", db.String())
+    brh_no = db.Column("fbrh_no", db.String(), primary_key=True)
+    brh_name = db.Column("fbrh_name", db.String())
 
 
 class Item(db.Model):
     """商品"""
     __tablename__ = 't_bi_master'
-    itemid = db.Column("fitem_id", db.Integer,primary_key=True)
-    itemno = db.Column("fitem_no",db.String, unique=True)
-    itemsubno = db.Column("fitem_subno", db.String, unique=True)
-    itemname = db.Column("fitem_name", db.String)
+    item_id = db.Column("fitem_id", db.Integer,primary_key=True)
+    item_no = db.Column("fitem_no",db.String, unique=True)
+    item_subno = db.Column("fitem_subno", db.String, unique=True)
+    item_name = db.Column("fitem_name", db.String)
 
 
 class OrderMaster(db.Model):
@@ -114,17 +122,17 @@ class DynamicModel:
     columns = {}     # model列
     table_index = ""
 
-    def __init__(self, grpno=None, brhno=None):
-        self.grpno = grpno
-        self.brhno = brhno
+    def __init__(self, grp_no=None, brh_no=None):
+        self.grp_no = grp_no
+        self.brh_no = brh_no
         self.table_index = self.get_table_index()
 
     def get_table_index(self):
         """获取表名索引"""
-        if self.brhno and not self.grpno:  # 如果传入分组名，则直接以分组名
-            table_index = '_' + BrDynamic().get_grpno(self.brhno)
-        elif self.grpno:
-            table_index = '_' + self.grpno
+        if self.brh_no and not self.grp_no:  # 如果传入分组名，则直接以分组名
+            table_index = '_' + BrDynamic().get_grpno(self.brh_no)
+        elif self.grp_no:
+            table_index = '_' + self.grp_no
         else:
             table_index = ""
         return table_index
@@ -137,7 +145,7 @@ class DynamicModel:
         model_column = {
             '__module__': __name__,
             '__name__': class_name,
-            '__tablename__': '{}{}'.format(self.table_name, self.table_index),
+            '__tablename__': '{}{}'.format(self.table_name, self.table_index)
         }
 
         #  model列
@@ -155,21 +163,20 @@ class DynamicInoutDetail(DynamicModel):
     """出入库明细表"""
     table_name = 't_inout_detail'
 
-    def __init__(self, brhno=None, grpno=None):
+    def __init__(self, brh_no=None, grp_no=None):
         super(__class__).__init__()
-        self.brhno = brhno
-        self.grpno = grpno
+        self.brh_no = brh_no
+        self.grp_no = grp_no
         self.table_index = self.get_table_index()
         self.columns = {
-            'sheetno': db.Column('fsheet_no',
-                                 db.String(), db.ForeignKey("t_inout_master{}.fsheet_no".format(self.table_index)),
-                                 primary_key=True),
-            'lineid': db.Column('fline_id', db.Integer, primary_key=True),
-            'itemid': db.Column("fitem_id", db.Integer),
-            'itemsubno': db.Column("fitem_subno", db.String(25)),
-            'unitno': db.Column('funit_no', db.String(4)),
-            'unitqty': db.Column('funit_qty', db.Numeric(19, 3)),
-            'packqty': db.Column('fpack_qty', db.Numeric(19, 3)),
+            'sheet_no': db.Column('fsheet_no',
+                                 db.String(), db.ForeignKey("t_inout_master{}.fsheet_no".format(self.table_index)), primary_key=True),
+            'line_id': db.Column('fline_id', db.Integer, primary_key=True),
+            'item_id': db.Column("fitem_id", db.Integer),
+            'item_subno': db.Column("fitem_subno", db.String(25)),
+            'unit_no': db.Column('funit_no', db.String(4)),
+            'unit_qty': db.Column('funit_qty', db.Numeric(19, 3)),
+            'pack_qty': db.Column('fpack_qty', db.Numeric(19, 3)),
             'qty': db.Column("fqty", db.Numeric(19, 3)),
             'price': db.Column("fprice", db.Numeric(19, 4)),
             'amt': db.Column('famt', db.Numeric(19, 2)),
@@ -180,29 +187,29 @@ class DynamicInoutMaster(DynamicModel):
         """出入库主表"""
         table_name = 't_inout_master'
 
-        def __init__(self, brhno=None,grpno=None):
+        def __init__(self, brh_no=None,grp_no=None):
             super(__class__).__init__()
-            self.brhno = brhno
-            self.grpno = grpno
+            self.brh_no = brh_no
+            self.grp_no = grp_no
             self.table_index = self.get_table_index()
-            dynamicinoutdetail = DynamicInoutDetail(grpno=grpno, brhno=brhno)
+            dynamicinoutdetail = DynamicInoutDetail(grp_no=grp_no, brh_no=brh_no)
             Detail = dynamicinoutdetail.model()
             self.columns = {
-                'sheetno': db.Column("fsheet_no", db.String(14), primary_key=True),
-                'sheettype': db.Column("fsheet_type", db.String(2)),
+                'sheet_no': db.Column("fsheet_no", db.String(14), primary_key=True),
+                'sheet_type': db.Column("fsheet_type", db.String(2)),
                 'status': db.Column('fstatus', db.String(1)),
-                'srctype': db.Column('fsrc_type', db.String(1)),
-                'srcno': db.Column('fsrc_no', db.String(14)),
-                'supno': db.Column('fsup_no', db.String(8)),
-                'brhno': db.Column('fbrh_no', db.String(6)),
-                'whno': db.Column('fwh_no', db.String(2)),
-                'dbrhno': db.Column('fd_brh_no', db.String(6)),
-                'inoutflag': db.Column('finout_flag', db.String(1)),
-                'croperno': db.Column('fcr_oper_no', db.String(6)),
-                'crdate': db.Column('fcr_date', db.Date),
-                'crtime': db.Column('fcr_time', db.Time),
-                'sumamt': db.Column('fsum_amt', db.Numeric(19, 2)),
-                'webapi': db.Column('fwebapi_flag', db.String(1)),
+                'src_type': db.Column('fsrc_type', db.String(1)),
+                'src_no': db.Column('fsrc_no', db.String(14)),
+                'sup_no': db.Column('fsup_no', db.String(8)),
+                'brh_no': db.Column('fbrh_no', db.String(6)),
+                'wh_no': db.Column('fwh_no', db.String(2)),
+                'd_brh_no': db.Column('fd_brh_no', db.String(6)),
+                'inout_flag': db.Column('finout_flag', db.String(1)),
+                'cr_oper_no': db.Column('fcr_oper_no', db.String(6)),
+                'cr_date': db.Column('fcr_date', db.Date),
+                'cr_time': db.Column('fcr_time', db.Time),
+                'sum_amt': db.Column('fsum_amt', db.Numeric(19, 2)),
+                'webapi_flag': db.Column('fwebapi_flag', db.String(1)),
                 'details': db.relationship(Detail),
             }
 

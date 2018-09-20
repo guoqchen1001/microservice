@@ -30,7 +30,7 @@ class InoutParser:
     )
 
     get.add_argument(
-        'brhno',
+        'brh_no',
         type=str,
         location=['args', 'headers'],
         required=False,
@@ -38,7 +38,7 @@ class InoutParser:
     )
 
     get.add_argument(
-        'sheettype',
+        'sheet_type',
         type=str,
         location=['args', 'headers'],
         required=False,
@@ -83,8 +83,9 @@ class AuthParser:
 
     auth = reqparse.RequestParser()
     auth.add_argument(
-        "token",
+        "Token",
         type=str,
-        required=True,
-        help="未检测到参数：<token>"
+        required=False,
+        location=['args', 'headers', "form"],
+        help="未检测到参数：<Token>"
     )

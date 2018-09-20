@@ -29,12 +29,15 @@ class SheetSlice:
     sheet_grp_slice = slice(6, 8)
 
 
-class UserPower:
-    """返回登录用户有权限的供应商，门店等"""
-    def __init__(self, userno):
-        self.userno = userno
+class ErrorCode(Enum):
+    sheet_not_found = "SheetNotFound"
+    page_of_sheet_not_found = "PageOfSheetNotFound"
+    permission_not_allowed = "PermissionNotAllowed"
+    sheet_already_done = "SheetAlreadyDone"
+    sheet_type_required = "SheetTypeRequired"
+    signature_expired = "SignatureExpired"
+    signature_required = "SignatureExpired"
+    user_not_found = "UserNotFound"
 
-    def get_supno(self):
-        """目前默认用户编码和供应商编码相同"""
-        return '203701'
+
 

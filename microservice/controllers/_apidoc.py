@@ -1,56 +1,75 @@
-
+###############################################
 """
     @apiDefine UserNotFoundError 用户不存在或密码错误
     @apiError (Error 400) UserNotFound 用户不存在或密码错误
-    @apiErrorExample Error-Response:
-      HTTP/1.1 400 Not Found
-      {
-        "error": "用户名不存在或密码错误"
-     }
-
 """
+###############################################
 
+
+###############################################
+"""
+   @apiDefine ErrorExample
+   @apiErrorExample {json} Error-Response:
+   HTTP/1.1 4xx
+   {
+        "message": "ErrorMessage"
+        "code": "ErrorCode "
+   }
+"""
+###############################################
+
+
+###############################################
 """
     @apiDefine GetSheet 单据查询
     @apiParam  (入参) {int}  page=1  页数
     @apiParam  (入参) {string} sheet_no 单号,不传入则返回单据列表
-    @apiErrorExample {json} Error-Response:
-        HTTP/1.1 400 Not Found
-        {
-            "message": "单号1234567890的单据不存在"
-        }
-        HTTP/1.1 400 Not Found
-        {
-            "message": "单据第2页不存在"
-        }
+    @apiError  (SheetError 400) SheetNotFound 单据不存在
+    @apiError  (SheetError 400) PageOfSheetNotFound 单据页不存在
 """
+###############################################
 
 
+###############################################
+"""
+    @apiDefine PutSheet 单据修改
+    @apiParam  (入参) {string} sheet_no （必须）单号
+    @apiError  (SheetError 400) SheetNotFound 单据不存在  
+    @apiError  (SheetError 401) PermissionNotAllowed 权限不足 
+    @apiError  (SheetError 400) SheetAlreadyDone 单据已处理 
+    @apiSuccess (回参) {string} sheet_no 单据编号
+"""
+###############################################
+
+
+###############################################
 """
     @apiDefine GetSheetByType 单据类型
     @apiParam (入参) {string} sheet_type 单据类型
-    @apiErrorExample {json} Error-Response:
-        HTTP/1.1 400 Not Found
-        {
-            "message": "无效的单据类型"
-        }
+    @apiError (SheetError 403)SheetTypeRequired  无效的单据类型
 """
+###############################################
 
 
+###############################################
 """
-    @apiDefine supply 供应商
+    @apiDefine supply 供应商权限
     此接口只能有供应商调用.
 """
+###############################################
 
+
+###############################################
 """
     @apiDefine AuthRequired 身份验证
-    @apiParam (入参-签名) {string} token （必填）签名
+    @apiParam (入参-签名) {string} Token （必填） 签名
     @apiError (AuthError 403) SignatureExpired 签名已过期
     @apiError (AuthError 401) SignatureExpired 签名不合法
 """
+###############################################
 
 
-
+###############################################
 """
     @apiDefine OrderReturnParam 订单回传参数
     @apiSuccess (回参) {object[]} order 订单
@@ -72,7 +91,7 @@
 
     @apiSuccess (order-details) {int} line_id 行号
     @apiSuccess (order-details) {int} item_id 商品ID
-    @apiSuccess (order-details) {int} item_subnono 商品条码
+    @apiSuccess (order-details) {int} item_subno 商品条码
     @apiSuccess (order-details) {string} item_name 商品名称
     @apiSuccess (order-details) {string} unit_no 单位
     @apiSuccess (order-details) {decimal} pack_qty 件数
@@ -86,5 +105,39 @@
     @apiSuccess (order-brs) {decimal} qty 数量
 
 """
+###############################################
 
 
+###############################################
+"""
+    @apiDefine InoutReturnParam 出入库回传参数
+    @apiSuccess (回参) {object[]} inout 出入库单据
+    @apiSuccess (inout) {string} sheet_no 单号
+    @apiSuccess (inout) {string} sheet_type 单据类型
+    @apiSuccess (inout) {string} src_no 来源单据
+    @apiSuccess (inout) {string} sup_no 供应商编码
+    @apiSuccess (inout) {string} sup_name 供应商名称
+    @apiSuccess (inout) {string} brh_no 机构编码
+    @apiSuccess (inout) {string} brh_name 机构名称
+    @apiSuccess (inout) {decimal} sum_amt 合计金额
+    @apiSuccess (inout) {date} cr_date 制单日期
+    @apiSuccess (inout) {time} cr_time 制单时间
+    @apiSuccess (inout) {string}  status 单据状态
+    @apiSuccess (inout) {string}  cr_oper_no 制单人
+    @apiSuccess (inout) {object[]}  details 单据明细
+
+
+    @apiSuccess (inout-details) {int} line_id 行号
+    @apiSuccess (inout-details) {int} item_id 商品ID
+    @apiSuccess (inout-details) {int} item_subno 商品条码
+    @apiSuccess (inout-details) {string} item_name 商品名称
+    @apiSuccess (inout-details) {string} unit_no 单位
+    @apiSuccess (inout-details) {decimal} pack_qty 件数
+    @apiSuccess (inout-details) {decimal} unit_qty 包装因子
+    @apiSuccess (inout-details) {decimal} qty 数量
+    @apiSuccess (inout-details) {decimal} price 价格
+    @apiSuccess (inout-details) {decimal} amt 金额
+
+
+"""
+###############################################

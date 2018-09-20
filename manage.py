@@ -15,7 +15,6 @@ from microservice.models import (
     User
 )
 
-
 env = "microservice.config.{}Config".format("Dev")
 
 app = create_app(env)

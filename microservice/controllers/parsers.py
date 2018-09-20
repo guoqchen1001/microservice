@@ -56,7 +56,7 @@ class StockParser:
         default=1,
     )
     get.add_argument(
-        'itemsubno',
+        'item_subno',
         type=str,
         location=['args', 'headers'],
         required=False,

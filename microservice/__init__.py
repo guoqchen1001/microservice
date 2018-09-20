@@ -18,9 +18,9 @@ def create_app(object_name):
     rest_api.add_resource(OrderDOApi, '/api/order/do', '/api/order/do/', '/api/order/do/<string:sheet_no>', endpoint='do')
     # 出入库
     rest_api.add_resource(InoutPIApi, '/api/inout/pi', '/api/inout/pi/', '/api/inout/pi/<string:sheet_no>', endpoint='pi')
-    rest_api.add_resource(InoutROApi, '/api/inout/ro', '/api/inout/ro/<string:sheet_no>', endpoint='ro')
+    rest_api.add_resource(InoutROApi, '/api/inout/ro', '/api/inout/ro/', '/api/inout/ro/<string:sheet_no>', endpoint='ro')
     # 库存
-    rest_api.add_resource(StockApi,'/api/stock/', '/api/stock/<string:brhno>', endpoint='stock')
+    rest_api.add_resource(StockApi,'/api/stock/', '/api/stock/<string:brh_no>', endpoint='stock')
     # 登录验证,获取token
     rest_api.add_resource(AuthApi, '/api/auth', '/api/auth/', endpoint="auth")
     # 主页

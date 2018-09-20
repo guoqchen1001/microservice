@@ -12,7 +12,8 @@ from microservice.models import (
     DynamicStock,
     DynamicInoutMaster,
     DynamicInoutDetail,
-    User
+    User,
+    BranchWareHouse
 )
 
 env = "microservice.config.{}Config".format("Dev")
@@ -36,9 +37,8 @@ def make_shell_context():
                 DynamicInoutMaster=DynamicInoutMaster,
                 DynamicInoutDetail=DynamicInoutDetail,
                 Branch=Branch,
-                User=User
-
-
+                User=User,
+                BranchWareHouse=BranchWareHouse
                 )
 
 

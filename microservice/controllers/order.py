@@ -33,6 +33,10 @@ class OrderApi(Resource):
             sup_no = None
 
         if sheet_no:
+
+            if not SheetBase.sheet_no_validator(sheet_no):
+                abort(400, message="单号无效", code=ErrorCode.sheet_no_not_valid)
+
             order = OrderMaster.query.filter(
                 OrderMaster.sheet_type == self.sheet_type,
                 OrderMaster.sheet_no == sheet_no)
@@ -40,7 +44,7 @@ class OrderApi(Resource):
             if not order.first():
                 abort(400, message="单据{}不存在".format(sheet_no), code="SheetNotFound")
 
-            order = order.filter(OrderMaster.sup_no == sup_no).first()
+            order = order.filter(OrderMaster.sup_no.in_(sup_no)).first()
             if not order:
                 abort(403, message="权限不足", code="PermissionNotAllowed")
 
@@ -59,7 +63,7 @@ class OrderApi(Resource):
                 OrderMaster.status == SheetStatus.approve.value,     # 审核状态
                 OrderMaster.sheet_type == self.sheet_type,           # 订单类型
                 OrderMaster.webapi_flag != SheetBase.flag_done_yes,  # 排除已处理
-                OrderMaster.sup_no == sup_no).order_by(              #
+                OrderMaster.sup_no.in_(sup_no)).order_by(              #
                 OrderMaster.cr_date.desc(), OrderMaster.cr_time.desc()).paginate(
                 page, self.per_page)
 
@@ -83,6 +87,9 @@ class OrderApi(Resource):
             abort(400, message="请传入有效的单据号", code="SheetNoRequired")
         if sheet_no:
 
+            if not SheetBase.sheet_no_validator(sheet_no):
+                abort(400, message="单号无效", code=ErrorCode.sheet_no_not_valid)
+
             # 登录用户，通过auth接口的token解析而得，从而进行权限控制
             if user:
                 sup_no = user.get_supply()
@@ -93,7 +100,7 @@ class OrderApi(Resource):
             if not order.first():
                 abort(400, message="单据{}不存在".format(sheet_no), code="SheetNotFound")
 
-            order = order.filter(OrderMaster.sup_no == sup_no)
+            order = order.filter(OrderMaster.sup_no.in_(sup_no))
             if not order.first():
                 abort(400, message="权限不足".format(sheet_no), code="PermissionNotAllowed")
 
@@ -109,7 +116,7 @@ class OrderApi(Resource):
 
 class OrderDOApi(OrderApi):
     """
-        @api {get}  /api/order/do/:sheet_no 获取单据信息
+        @api {get}  /api/order/do/<string:sheet_no>  获取单据信息
         @apiVersion 1.0.0
         @apiName  DirectOrder
         @apiGroup 直配订单
@@ -129,7 +136,7 @@ class OrderDOApi(OrderApi):
     """
 
     """
-        @api {put}  /api/order/do/:sheet_no 修改处理标志
+        @api {put}  /api/order/do/<string:sheet_no> 修改处理标志
         @apiVersion 1.0.0
         @apiName  UpdateDirectOrder
         @apiGroup 直配订单

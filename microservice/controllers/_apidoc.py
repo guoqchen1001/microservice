@@ -23,6 +23,7 @@
 """
     @apiDefine GetSheet 单据查询
     @apiParam  (入参) {int}  page=1  页数
+    @apiError  (SheetError 400) SheetNoNotValid 无效的单号
     @apiParam  (入参) {string} sheet_no 单号,不传入则返回单据列表
     @apiError  (SheetError 400) SheetNotFound 单据不存在
     @apiError  (SheetError 400) PageOfSheetNotFound 单据页不存在
@@ -34,6 +35,7 @@
 """
     @apiDefine PutSheet 单据修改
     @apiParam  (入参) {string} sheet_no （必须）单号
+    @apiError  (SheetError 400) SheetNoNotValid 无效的单号
     @apiError  (SheetError 400) SheetNotFound 单据不存在  
     @apiError  (SheetError 401) PermissionNotAllowed 权限不足 
     @apiError  (SheetError 400) SheetAlreadyDone 单据已处理 
@@ -139,5 +141,20 @@
     @apiSuccess (inout-details) {decimal} amt 金额
 
 
+"""
+###############################################
+
+
+###############################################
+"""
+    @apiDefine StockSuccessParam 
+    @apiSuccess (Stock) {string} brh_no   门店编码
+    @apiSuccess (Stock) {string} brh_name 门店名称
+    @apiSuccess (Stock) {string} wh_no    仓库编码
+    @apiSuccess (Stock) {string} wh_name  仓库名称
+    @apiSuccess (Stock) {string} item_no  商品编码
+    @apiSuccess (Stock) {string} item_subno  商品条码
+    @apiSuccess (Stock) {string} item_name  商品名称
+    @apiSuccess (Stock) {decimal} qty  库存数量（最小单位）
 """
 ###############################################

@@ -1,9 +1,15 @@
 from enum import Enum
+import re
 
 
 class SheetBase:
     per_page = 10
     flag_done_yes = '1'
+
+    @staticmethod
+    def sheet_no_validator(sheet_no):
+        pattern = re.compile(r'\d{8}[A-Z]{2}\d{4}')
+        return pattern.match(sheet_no)
 
 
 class SheetStatus(Enum):
@@ -22,6 +28,8 @@ class SheetType(Enum):
     op = 'OP'  # 永续
     pi = 'PI'  # 采购收货
     ro = 'RO'  # 采购退货
+    qs = "QS"
+    qt = "QT"
 
 
 class SheetSlice:
@@ -38,6 +46,7 @@ class ErrorCode(Enum):
     signature_expired = "SignatureExpired"
     signature_required = "SignatureExpired"
     user_not_found = "UserNotFound"
+    sheet_no_not_valid = "SheetNoNotValid"
 
 
 

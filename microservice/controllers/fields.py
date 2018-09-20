@@ -79,14 +79,14 @@ class InoutFields:
 
 class StockFields:
     stock = {
-        "brhno": fields.String,
-        "brhname": fields.String,
-        "whno": fields.String,
-        "whname": fields.String,
-        "itemid": fields.Integer,
-        "itemno": fields.String,
-        "itemsubno": fields.String,
-        "itemname": fields.String,
+        "brh_no": fields.String,
+        "brh_name": fields.String,
+        "wh_no": fields.String,
+        "wh_name": fields.String,
+        "item_id": fields.Integer,
+        "item_no": fields.String,
+        "item_subno": fields.String,
+        "item_name": fields.String,
         "qty": fields.Float
     }
 

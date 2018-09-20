@@ -4,6 +4,26 @@ import hashlib
 db = SQLAlchemy()
 
 
+def gt_cr_datetime(self, other):
+    """__gt__ 方法,"""
+    if self.cr_date > other.cr_date:
+        return True
+    elif self.cr_date == other.cr_date and self.cr_time > other.cr_time:
+        return True
+    else:
+        return False
+
+
+def lt_cr_datetime(self, other):
+    """__lt__ 方法"""
+    if self.cr_date < other.cr_date:
+        return True
+    elif self.cr_date == other.cr_date and self.cr_time < other.cr_time:
+        return True
+    else:
+        return False
+
+
 class BrDynamic(db.Model):
     __tablename__ = "t_br_dynamic"
     brh_no = db.Column('fbrh_no', db.String(), primary_key=True)
@@ -31,7 +51,7 @@ class User(db.Model):
 
     def get_supply(self):
         """有权限的供应商"""
-        return "203701"
+        return "203701",
 
     def get_branch(self):
         """有权限的机构"""
@@ -50,6 +70,15 @@ class Branch(db.Model):
     __tablename__ = 't_br_master'
     brh_no = db.Column("fbrh_no", db.String(), primary_key=True)
     brh_name = db.Column("fbrh_name", db.String())
+
+
+class BranchWareHouse(db.Model):
+    """门店仓库"""
+    __tablename__ = "t_br_bw"
+    brh_no = db.Column("fbrh_no", db.String, primary_key=True)
+    line_id = db.Column("fline_id", db.Integer, primary_key=True)
+    wh_no = db.Column("fwh_no", db.String)
+    wh_name = db.Column("fwh_name", db.String)
 
 
 class Item(db.Model):
@@ -118,9 +147,10 @@ class OrderBr(db.Model):
 class DynamicModel:
     """分组表"""
     _mapper = {}     # 缓存model名和对象映射关系
+    table_index = ""
     table_name = ''  # 主表名
     columns = {}     # model列
-    table_index = ""
+    gt_and_lt = {}  # 大小比较, __gt__和 __lt__函数
 
     def __init__(self, grp_no=None, brh_no=None):
         self.grp_no = grp_no
@@ -150,6 +180,8 @@ class DynamicModel:
 
         #  model列
         model_column.update(self.columns)
+        # 大小比较
+        model_column.update(self.gt_and_lt)
 
         if model_class is None:
             model_class = type(class_name, (db.Model,), model_column)
@@ -164,10 +196,9 @@ class DynamicInoutDetail(DynamicModel):
     table_name = 't_inout_detail'
 
     def __init__(self, brh_no=None, grp_no=None):
-        super(__class__).__init__()
-        self.brh_no = brh_no
-        self.grp_no = grp_no
-        self.table_index = self.get_table_index()
+
+        super(__class__, self).__init__(brh_no=brh_no, grp_no=grp_no)
+
         self.columns = {
             'sheet_no': db.Column('fsheet_no',
                                  db.String(), db.ForeignKey("t_inout_master{}.fsheet_no".format(self.table_index)), primary_key=True),
@@ -186,14 +217,18 @@ class DynamicInoutDetail(DynamicModel):
 class DynamicInoutMaster(DynamicModel):
         """出入库主表"""
         table_name = 't_inout_master'
+        gt_and_lt = {
+            '__gt__': gt_cr_datetime,
+            '__lt__': lt_cr_datetime
+        }
 
-        def __init__(self, brh_no=None,grp_no=None):
-            super(__class__).__init__()
-            self.brh_no = brh_no
-            self.grp_no = grp_no
-            self.table_index = self.get_table_index()
+        def __init__(self, brh_no=None, grp_no=None):
+
+            super(__class__, self).__init__(brh_no=brh_no,grp_no=grp_no)
+
             dynamicinoutdetail = DynamicInoutDetail(grp_no=grp_no, brh_no=brh_no)
             Detail = dynamicinoutdetail.model()
+
             self.columns = {
                 'sheet_no': db.Column("fsheet_no", db.String(14), primary_key=True),
                 'sheet_type': db.Column("fsheet_type", db.String(2)),
@@ -217,14 +252,18 @@ class DynamicInoutMaster(DynamicModel):
 class DynamicStock(DynamicModel):
     """库存表"""
     table_name = 't_sk_master'
-    columns = {
-        "sheetno": db.Column("fsheet_no", db.String, primary_key=True),
-        "lineid": db.Column("fline_id", db.Integer, primary_key=True),
-        "brhno": db.Column("fbrh_no", db.String),
-        "whno": db.Column('fwh_no', db.String),
-        "itemid": db.Column('fitem_id', db.Integer),
-        "qty": db.Column("fqty", db.Numeric(19, 3))
-    }
+
+    def __init__(self, brh_no=None, grp_no=None):
+        super(DynamicStock, self).__init__(brh_no=brh_no,grp_no=grp_no)
+        self.columns = {
+            "sheet_no": db.Column("fsheet_no", db.String, primary_key=True),
+            "line_id": db.Column("fline_id", db.Integer, primary_key=True),
+            "sup_no": db.Column("fsup_no", db.String),
+            "brh_no": db.Column("fbrh_no", db.String),
+            "wh_no": db.Column('fwh_no', db.String),
+            "item_id": db.Column('fitem_id', db.Integer),
+            "qty": db.Column("fqty", db.Numeric(19, 3))
+        }
 
 
 

@@ -16,7 +16,7 @@ class StockApi(Resource):
     @AuthApi.auth_required
     @marshal_with(StockFields.stock)
     def get(self, brh_no=None, user=None):
-         """
+        """
         @api {get}  /api/stock/<string:brh_no>  获取库存信息
         @apiVersion 1.0.0
         @apiName  GetStock

@@ -4,7 +4,7 @@ import json
 import decimal
 
 rest_api = Api()
-apidoc = ApiDoc()
+api_doc = ApiDoc()
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -15,3 +15,4 @@ class DecimalEncoder(json.JSONEncoder):
         elif isinstance(o, bytes):
             return o.decode(encoding='utf-8')
         return super(DecimalEncoder, self).default(o)
+    

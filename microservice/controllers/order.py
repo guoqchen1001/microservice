@@ -120,12 +120,14 @@ class OrderDOApi(OrderApi):
         @apiVersion 1.0.0
         @apiName  DirectOrder
         @apiGroup 直配订单
+       
 
         @apiPermission supply
         @apiUse  AuthRequired
         @apiUse OrderReturnParam
         @apiUse GetSheet
         @apiUse ErrorExample
+    
 
         @apiSuccessExample {json} Success-Response:
         HTTP/1.1 200
@@ -140,6 +142,7 @@ class OrderDOApi(OrderApi):
         @apiVersion 1.0.0
         @apiName  UpdateDirectOrder
         @apiGroup 直配订单
+        
 
         @apiUse PutSheet
         @apiPermission supply

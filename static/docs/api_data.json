@@ -1,11 +1,39 @@
 [
   {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./static/docs/main.js",
+    "group": "E:\\MicroService\\static\\docs\\main.js",
+    "groupTitle": "E:\\MicroService\\static\\docs\\main.js",
+    "name": ""
+  },
+  {
     "type": "get",
     "url": "/api/inout/qs/<string:sheet_no>",
     "title": "获取单据信息",
     "version": "1.0.0",
     "name": "Sale",
-    "group": "商品销售",
+    "group": "前台商品销售",
     "permission": [
       {
         "name": "supply",
@@ -198,8 +226,8 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
-    "groupTitle": "商品销售",
+    "filename": "./microservice/controllers/inout.py",
+    "groupTitle": "前台商品销售",
     "parameter": {
       "fields": {
         "入参-签名": [
@@ -284,7 +312,7 @@
     "title": "修改处理标志",
     "version": "1.0.0",
     "name": "UpdateSale",
-    "group": "商品销售",
+    "group": "前台商品销售",
     "permission": [
       {
         "name": "supply",
@@ -312,8 +340,8 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
-    "groupTitle": "商品销售",
+    "filename": "./microservice/controllers/inout.py",
+    "groupTitle": "前台商品销售",
     "parameter": {
       "fields": {
         "入参": [
@@ -398,7 +426,7 @@
     "title": "获取单据信息",
     "version": "1.0.0",
     "name": "ReturnSale",
-    "group": "商品销售退货",
+    "group": "前台销售退货",
     "permission": [
       {
         "name": "supply",
@@ -591,8 +619,8 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
-    "groupTitle": "商品销售退货",
+    "filename": "./microservice/controllers/inout.py",
+    "groupTitle": "前台销售退货",
     "parameter": {
       "fields": {
         "入参-签名": [
@@ -677,7 +705,7 @@
     "title": "修改处理标志",
     "version": "1.0.0",
     "name": "UpdateReturnSale",
-    "group": "商品销售退货",
+    "group": "前台销售退货",
     "permission": [
       {
         "name": "supply",
@@ -705,8 +733,8 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
-    "groupTitle": "商品销售退货",
+    "filename": "./microservice/controllers/inout.py",
+    "groupTitle": "前台销售退货",
     "parameter": {
       "fields": {
         "入参": [
@@ -832,7 +860,7 @@
         }
       ]
     },
-    "filename": "MicroService/controllers/auth.py",
+    "filename": "./microservice/controllers/auth.py",
     "groupTitle": "安全校验",
     "error": {
       "fields": {
@@ -952,7 +980,7 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/stock.py",
+    "filename": "./microservice/controllers/stock.py",
     "groupTitle": "库存查询",
     "error": {
       "fields": {
@@ -1225,7 +1253,7 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/order.py",
+    "filename": "./microservice/controllers/order.py",
     "groupTitle": "直配订单",
     "parameter": {
       "fields": {
@@ -1339,7 +1367,7 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/order.py",
+    "filename": "./microservice/controllers/order.py",
     "groupTitle": "直配订单",
     "parameter": {
       "fields": {
@@ -1618,7 +1646,7 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
+    "filename": "./microservice/controllers/inout.py",
     "groupTitle": "采购收货单",
     "parameter": {
       "fields": {
@@ -1732,7 +1760,7 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
+    "filename": "./microservice/controllers/inout.py",
     "groupTitle": "采购收货单",
     "parameter": {
       "fields": {
@@ -2011,7 +2039,7 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
+    "filename": "./microservice/controllers/inout.py",
     "groupTitle": "采购退货单",
     "parameter": {
       "fields": {
@@ -2125,7 +2153,7 @@
         ]
       }
     },
-    "filename": "MicroService/controllers/inout.py",
+    "filename": "./microservice/controllers/inout.py",
     "groupTitle": "采购退货单",
     "parameter": {
       "fields": {

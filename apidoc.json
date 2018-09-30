@@ -4,5 +4,15 @@
   "version": "1.0.0",
   "description": "rest api for 云鼎",
   "title": "rest api for 云鼎",
-  "url" : "http://localhost:5000"
+  "url" : "http://localhost:5000",
+  "order": [
+      "安全校验",
+      "直配订单",
+      "采购收货单",
+      "采购退货单",
+      "前台商品销售",
+      "前台销售退货",
+      "库存查询"
+
+  ]
 }

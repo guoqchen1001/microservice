@@ -294,7 +294,7 @@ class InoutQSApi(InoutApi):
         @api {get}  /api/inout/qs/<string:sheet_no>   获取单据信息
         @apiVersion 1.0.0
         @apiName  Sale
-        @apiGroup 商品销售
+        @apiGroup 前台商品销售
 
         @apiPermission supply
         @apiUse  AuthRequired
@@ -314,7 +314,7 @@ class InoutQSApi(InoutApi):
         @api {put}  /api/inout/qs/<string:sheet_no>  修改处理标志
         @apiVersion 1.0.0
         @apiName  UpdateSale
-        @apiGroup 商品销售
+        @apiGroup 前台商品销售
 
         @apiUse PutSheet
         @apiPermission supply
@@ -335,7 +335,7 @@ class InoutQTApi(InoutApi):
         @api {get}  /api/inout/qt/<string:sheet_no>   获取单据信息
         @apiVersion 1.0.0
         @apiName  ReturnSale
-        @apiGroup 商品销售退货
+        @apiGroup 前台销售退货
 
         @apiPermission supply
         @apiUse  AuthRequired
@@ -355,7 +355,7 @@ class InoutQTApi(InoutApi):
         @api {put}  /api/inout/qt/<string:sheet_no>  修改处理标志
         @apiVersion 1.0.0
         @apiName  UpdateReturnSale
-        @apiGroup 商品销售退货
+        @apiGroup 前台销售退货
 
         @apiUse PutSheet
         @apiPermission supply

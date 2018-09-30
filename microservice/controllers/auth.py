@@ -46,6 +46,9 @@ class AuthApi(Resource):
         def _warpper(*args, **kwargs):
             r_args = AuthParser.auth.parse_args()
             token = r_args['Token']
+            
+            if not token:
+                abort(400, message="未检测到token", code=ErrorCode.signature_required.value)
 
             user_no = ""  # 用户编码
 
